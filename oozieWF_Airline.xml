@@ -1,0 +1,55 @@
+<workflow-app xmlns="uri:oozie:workflow:0.1" name="WorkflowRunnerTest">
+
+  <start to="oozieone"/>
+
+  <action name="oozieone/">
+    <map-reduce>
+      <job-tracker>localhost:54101</job-tracker>
+      <name-node>hdfs://localhost:54100</name-node>
+
+      <prepare>
+        <delete path="hdfs://localhost:54100/user/user1/out1"/>
+      </prepare>
+
+      <configuration>
+        <property> 
+          <name>mapred.job.queue.name</name>
+          <value>default</value>
+        </property>
+        <property>
+          <name>mapred.mapper.class</name>
+          <value>MapperClass</value>
+        </property>
+        <property>
+          <name>mapred.reducer.class</name>
+          <value>ReducerClass</value>
+        </property>
+        <property>
+          <name>mapred.output.key.class</name>
+          <value>org.apache.hadoop.io.Text</value>
+        </property>
+        <property>
+          <name>mapred.output.value.class</name>
+          <value>org.apache.hadoop.io.IntWritable</value>
+        </property>
+        <property>
+          <name>mapred.input.dir</name>
+          <value>/user/user1/inp</value>
+        </property>
+        <property>
+          <name>mapred.output.dir</name>
+          <value>/user/user1/out1</value>
+        </property>
+      </configuration>
+    </map-reduce>
+
+    <ok to="end"/>
+    <error to="fail"/>
+  </action>
+
+  <kill name="fail">
+    <message>Map/Reduce failed, error message</message>
+  </kill>
+  <end name="end"/>
+
+</workflow-app>
